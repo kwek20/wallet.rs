@@ -10,7 +10,7 @@ use crate::{
 
 use getset::Getters;
 use iota::{
-    bee_rest_api::handlers::message_metadata::LedgerInclusionStateDto,
+    bee_rest_api::handlers::api::v1::message_metadata::LedgerInclusionStateDto,
     client::api::finish_pow,
     message::prelude::{
         Essence, Input, Message as IotaMessage, MessageId, Payload, RegularEssence, SignatureLockedSingleOutput,
