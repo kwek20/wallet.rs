@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/actor/message.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>message.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../iota_wallet/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../iota_wallet/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
@@ -436,6 +436,16 @@
 <span id="433">433</span>
 <span id="434">434</span>
 <span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 IOTA Stiftung</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
@@ -544,7 +554,14 @@
         <span class="ident">method</span>: <span class="ident">AccountMethod</span>,
     },
     <span class="doccomment">/// Sync accounts.</span>
-    <span class="ident">SyncAccounts</span>,
+    <span class="ident">SyncAccounts</span> {
+        <span class="doccomment">/// The first address index to sync.</span>
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;addressIndex&quot;</span>)]</span>
+        <span class="ident">address_index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+        <span class="doccomment">/// The gap limit.</span>
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;gapLimit&quot;</span>)]</span>
+        <span class="ident">gap_limit</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    },
     <span class="doccomment">/// Reattach message.</span>
     <span class="ident">Reattach</span> {
         <span class="doccomment">/// The account identifier.</span>
@@ -621,10 +638,10 @@
     },
     <span class="doccomment">/// Checks if all accounts has unused latest address after syncing with the Tangle.</span>
     <span class="ident">IsLatestAddressUnused</span>,
-    <span class="doccomment">/// Open the iota ledger app on Ledger Nano or Speculos simulator.</span>
+    <span class="doccomment">/// Get the Ledger Nano or Speculos simulator status.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano-simulator&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano-simulator&quot;</span>))))]</span>
-    <span class="ident">OpenLedgerApp</span>(<span class="ident">bool</span>),
+    <span class="ident">GetLedgerStatus</span>(<span class="ident">bool</span>),
     <span class="doccomment">/// Deletes the storage.</span>
     <span class="ident">DeleteStorage</span>,
     <span class="doccomment">/// Changes stronghold snapshot password.</span>
@@ -656,7 +673,10 @@
                 <span class="ident">account_id</span>: <span class="kw">_</span>,
                 <span class="ident">method</span>: <span class="kw">_</span>,
             } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">4</span>, <span class="string">&quot;CallAccountMethod&quot;</span>),
-            <span class="ident">MessageType</span>::<span class="ident">SyncAccounts</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">5</span>, <span class="string">&quot;SyncAccounts&quot;</span>),
+            <span class="ident">MessageType</span>::<span class="ident">SyncAccounts</span> {
+                <span class="ident">address_index</span>: <span class="kw">_</span>,
+                <span class="ident">gap_limit</span>: <span class="kw">_</span>,
+            } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">5</span>, <span class="string">&quot;SyncAccounts&quot;</span>),
             <span class="ident">MessageType</span>::<span class="ident">Reattach</span> {
                 <span class="ident">account_id</span>: <span class="kw">_</span>,
                 <span class="ident">message_id</span>: <span class="kw">_</span>,
@@ -705,7 +725,7 @@
                 <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">19</span>, <span class="string">&quot;IsLatestAddressUnused&quot;</span>)
             }
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano-simulator&quot;</span>))]</span>
-            <span class="ident">MessageType</span>::<span class="ident">OpenLedgerApp</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">20</span>, <span class="string">&quot;OpenLedgerApp&quot;</span>),
+            <span class="ident">MessageType</span>::<span class="ident">GetLedgerStatus</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">20</span>, <span class="string">&quot;GetLedgerStatus&quot;</span>),
             <span class="ident">MessageType</span>::<span class="ident">DeleteStorage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">serializer</span>.<span class="ident">serialize_unit_variant</span>(<span class="string">&quot;MessageType&quot;</span>, <span class="number">21</span>, <span class="string">&quot;DeleteStorage&quot;</span>),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;stronghold&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;stronghold-storage&quot;</span>))]</span>
             <span class="ident">MessageType</span>::<span class="ident">ChangeStrongholdPassword</span> {
@@ -820,10 +840,10 @@
     <span class="ident">UpdatedAlias</span>,
     <span class="doccomment">/// Account method SetClientOptions response.</span>
     <span class="ident">UpdatedClientOptions</span>,
-    <span class="doccomment">/// OpenLedgerApp response.</span>
+    <span class="doccomment">/// GetLedgerStatus response.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano-simulator&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ledger-nano-simulator&quot;</span>))))]</span>
-    <span class="ident">OpenedLedgerApp</span>,
+    <span class="ident">LedgerStatus</span>(<span class="kw">crate</span>::<span class="ident">LedgerStatus</span>),
     <span class="doccomment">/// DeleteStorage response.</span>
     <span class="ident">DeletedStorage</span>,
     <span class="doccomment">/// ChangeStrongholdPassword response.</span>
